@@ -1,150 +1,195 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8" />
-  <title>Agenda de Contactos em C++</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html, body {
-      width: 100%;
-      height: 100%;
-      font-family: 'Segoe UI', sans-serif;
-      overflow: hidden;
-      background: url('https://i.gifer.com/7HxD.gif') no-repeat center center fixed;
-      background-size: cover;
-    }
-
-    .slides {
-      display: flex;
-      height: 100vh;
-      width: 100vw;
-      transition: transform 0.8s ease-in-out;
-    }
-
-    .slide {
-      flex: 0 0 100%;
-      padding: 60px;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      position: relative;
-      backdrop-filter: brightness(0.3) blur(2px);
-      animation: fadeIn 1s ease-in-out;
-      opacity: 0;
-    }
-
-    .slide.active {
-      opacity: 1;
-      animation: fadeIn 0.8s ease forwards;
-    }
-
-    @keyframes fadeIn {
-      from {opacity: 0; transform: translateY(20px);}
-      to {opacity: 1; transform: translateY(0);}
-    }
-
-    h1, h2 {
-      font-size: 2.5rem;
-      margin-bottom: 20px;
-      text-shadow: 2px 2px 4px #000;
-    }
-
-    p, li, pre {
-      font-size: 1.2rem;
-      line-height: 1.6;
-      text-shadow: 1px 1px 3px #000;
-    }
-
-    ul {
-      list-style-type: square;
-      margin-left: 1.5rem;
-    }
-
-    .nav {
-      position: fixed;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 3rem;
-      color: white;
-      background: rgba(0, 0, 0, 0.4);
-      border: none;
-      padding: 10px 20px;
-      cursor: pointer;
-      z-index: 10;
-      transition: background 0.3s;
-      user-select: none;
-    }
-
-    .nav:hover {
-      background: rgba(0, 0, 0, 0.6);
-    }
-
-    .prev { left: 10px; }
-    .next { right: 10px; }
-
-    .progress-bar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      height: 6px;
-      background: #00ffff;
-      width: 0%;
-      transition: width 0.5s ease;
-      z-index: 15;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Agenda de Contactos em C++ - Apresentação Profissional</title>
+<style>
+  * {
+    margin: 0; padding: 0; box-sizing: border-box;
+  }
+  html, body {
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: url('https://i.gifer.com/J4o.gif') no-repeat center center fixed;
+    background-size: cover;
+    color: white;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+  }
+  body {
+    scroll-snap-type: y mandatory;
+  }
+  section {
+    scroll-snap-align: start;
+    min-height: 100vh;
+    padding: 80px 60px;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(7px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  h1, h2 {
+    font-weight: 700;
+    margin-bottom: 25px;
+    text-shadow: 2px 2px 6px #000000cc;
+  }
+  h1 { font-size: 3.5rem; }
+  h2 { font-size: 2.8rem; }
+  p, ul, pre {
+    font-size: 1.3rem;
+    line-height: 1.7;
+    text-shadow: 1px 1px 3px #000000bb;
+    max-width: 850px;
+  }
+  ul {
+    margin-left: 1.8rem;
+    list-style-type: square;
+    text-align: left;
+  }
+  pre {
+    background: rgba(0,0,0,0.3);
+    padding: 15px;
+    border-radius: 10px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.1rem;
+    white-space: pre-wrap;
+    box-shadow: inset 0 0 10px #00ffffaa;
+    max-width: 850px;
+  }
+  nav.sidebar {
+    position: fixed;
+    top: 50%;
+    left: 20px;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    z-index: 100;
+  }
+  nav.sidebar button {
+    background: rgba(0,0,0,0.6);
+    border: none;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    color: #00ffff;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 12px #00ffff88;
+    transition: background 0.3s ease, transform 0.3s ease;
+  }
+  nav.sidebar button:hover,
+  nav.sidebar button.active {
+    background: #00ffff;
+    color: #000;
+    box-shadow: 0 0 24px #00ffffcc;
+    transform: scale(1.15);
+    z-index: 110;
+  }
+  nav.sidebar button[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 70px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #00ffffcc;
+    color: #000;
+    padding: 6px 12px;
+    border-radius: 8px;
+    white-space: nowrap;
+    font-size: 0.95rem;
+    box-shadow: 0 0 8px #00ffffaa;
+    pointer-events: none;
+    opacity: 1;
+    z-index: 200;
+  }
+  .terminal {
+    font-family: 'Courier New', Courier, monospace;
+    background: rgba(0,0,0,0.4);
+    padding: 20px 25px;
+    border-radius: 12px;
+    color: #00ffff;
+    box-shadow: 0 0 20px #00ffffaa;
+    max-width: 700px;
+    white-space: pre-wrap;
+    user-select: none;
+    position: relative;
+  }
+  .terminal::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 24px;
+    background: #00ffff;
+    animation: blink 1s steps(2, start) infinite;
+    right: 18px;
+    bottom: 15px;
+    border-radius: 2px;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+</style>
 </head>
 <body>
-  <div class="slides" id="slides">
-    <!-- Os slides abaixo seguem o mesmo padrão -->
-    <section class="slide active">
-      <h1>Agenda de Contactos em C++</h1>
-      <p>José Carlos Gomes | 1º PI - CFT</p>
-      <p>Escola Profissional do Fundão - 2024/2025</p>
-    </section>
 
-    <section class="slide">
-      <h2>Introdução</h2>
-      <p>Trabalho sobre Diagrama de Sequência e Agenda de Contactos em C++ com base de dados SQLite.</p>
-    </section>
+<nav class="sidebar" aria-label="Navegação">
+  <button data-tooltip="Capa" onclick="location.href='#slide-0'">🏠</button>
+  <button data-tooltip="Introdução" onclick="location.href='#slide-1'">📖</button>
+  <button data-tooltip="Objetivos" onclick="location.href='#slide-2'">✅</button>
+  <button data-tooltip="Diagrama" onclick="location.href='#slide-3'">📊</button>
+  <button data-tooltip="Menu Principal" onclick="location.href='#slide-4'">📂</button>
+  <button data-tooltip="Estrutura" onclick="location.href='#slide-5'">🛠️</button>
+  <button data-tooltip="Dificuldades" onclick="location.href='#slide-6'">⚠️</button>
+  <button data-tooltip="Conclusão" onclick="location.href='#slide-7'">🏁</button>
+  <button data-tooltip="Melhorias Futuras" onclick="location.href='#slide-8'">🚀</button>
+</nav>
 
-    <section class="slide">
-      <h2>Objetivos</h2>
-      <ul>
-        <li>Desenvolver aplicação em C++</li>
-        <li>Interagir com SQLite</li>
-        <li>Operações CRUD</li>
-        <li>Interface via terminal</li>
-      </ul>
-    </section>
-
-    <section class="slide">
-      <h2>Diagrama de Sequência</h2>
-      <p>Representa visualmente como o utilizador interage com a aplicação.</p>
-    </section>
-
-    <section class="slide">
-      <h2>Menu Principal</h2>
-      <pre>
---- Agenda de Contactos ---
-1. Adicionar
-2. Listar
-3. Buscar
-4. Editar
-5. Remover
-6. Sair
-      </pre>
-    </section>
-
-    <section class="slide">
-      <h2>Estrutura do Projeto</h2>
-      <pre>
+<section id="slide-0">
+  <h1>Agenda de Contactos em C++</h1>
+  <p>José Carlos Gomes | 1º PI - CFT</p>
+  <p>Escola Profissional do Fundão - 2024/2025</p>
+</section>
+<section id="slide-1">
+  <h2>Introdução</h2>
+  <p>Este trabalho aborda a implementação de uma Agenda de Contactos usando a linguagem C++, com integração ao banco de dados SQLite para armazenamento eficiente dos dados.</p>
+</section>
+<section id="slide-2">
+  <h2>Objetivos</h2>
+  <ul>
+    <li>Desenvolver uma aplicação funcional em C++;</li>
+    <li>Realizar operações CRUD (Criar, Ler, Atualizar e Apagar) em banco SQLite;</li>
+    <li>Construir uma interface de terminal intuitiva;</li>
+    <li>Demonstrar conhecimento na integração entre C++ e SQLite.</li>
+  </ul>
+</section>
+<section id="slide-3">
+  <h2>Diagrama de Sequência</h2>
+  <p>Este diagrama ilustra o fluxo de interação do utilizador com a aplicação, mostrando passo a passo a sequência das operações realizadas.</p>
+</section>
+<section id="slide-4">
+  <h2>Menu Principal</h2>
+  <div class="terminal">
+    --- Agenda de Contactos ---<br>
+    1. Adicionar<br>
+    2. Listar<br>
+    3. Buscar<br>
+    4. Editar<br>
+    5. Remover<br>
+    6. Sair
+  </div>
+</section>
+<section id="slide-5">
+  <h2>Estrutura do Projeto</h2>
+  <pre>
 agenda_contactos/
 │
 ├── build/               → Ficheiros compilados (.exe, .o, etc.)
@@ -153,75 +198,32 @@ agenda_contactos/
 │   └── agenda.db        → Base de dados gerada
 ├── include/             → Cabeçalhos personalizados (opcional)
 ├── src/                 → Código-fonte principal
-│   └── main.cpp         → Código principal C++
-├── lib/                 → Biblioteca SQLite (ex: sqlite3.dll)
-├── .vscode/             → Configurações VSCode
-└── Makefile             → Script para compilar pelo terminal
-      </pre>
-    </section>
+│   ├── main.cpp         → Código principal da aplicação
+├── Makefile             → Script de build automático
+  </pre>
+</section>
+<section id="slide-6">
+  <h2>Dificuldades</h2>
+  <ul>
+    <li>Configuração do ambiente com SQLite em C++;</li>
+    <li>Tratamento de erros e exceções na manipulação do banco de dados;</li>
+    <li>Estruturação do código para manter organização e modularidade;</li>
+    <li>Implementação de buscas eficientes dentro da base de dados.</li>
+  </ul>
+</section>
+<section id="slide-7">
+  <h2>Conclusão</h2>
+  <p>O projeto permitiu aplicar os conhecimentos de programação em C++ com uso prático de banco de dados. Superando desafios técnicos e estruturais, consegui entregar uma aplicação funcional e organizada. A experiência contribuiu diretamente para o crescimento como programador.</p>
+</section>
+<section id="slide-8">
+  <h2>Melhorias Futuras</h2>
+  <ul>
+    <li>Implementar interface gráfica (GUI);</li>
+    <li>Adicionar login de utilizador com autenticação;</li>
+    <li>Permitir exportação/importação de contactos em CSV;</li>
+    <li>Desenvolver versão web usando C++ com WebAssembly.</li>
+  </ul>
+</section>
 
-    <section class="slide">
-      <h2>Dificuldades</h2>
-      <ul>
-        <li>Configurar SQLite</li>
-        <li>cin.ignore()</li>
-        <li>Erros com acentos</li>
-      </ul>
-    </section>
-
-    <section class="slide">
-      <h2>Conclusão</h2>
-      <p>Foi possível aplicar os conhecimentos teóricos em prática com sucesso.</p>
-    </section>
-
-    <section class="slide">
-      <h2>Melhorias Futuras</h2>
-      <ul>
-        <li>Interface gráfica</li>
-        <li>Login de utilizadores</li>
-        <li>Exportação para CSV</li>
-      </ul>
-    </section>
-  </div>
-
-  <button class="nav prev">&#10094;</button>
-  <button class="nav next">&#10095;</button>
-  <div class="progress-bar" id="progress"></div>
-
-  <script>
-    const slides = document.querySelectorAll('.slide');
-    const progress = document.getElementById('progress');
-    const total = slides.length;
-    let current = 0;
-
-    function updateSlide(index) {
-      if (index < 0) index = 0;
-      if (index >= total) index = total - 1;
-
-      slides.forEach((s, i) => {
-        s.classList.remove('active');
-        if (i === index) s.classList.add('active');
-      });
-
-      document.getElementById("slides").style.transform = `translateX(-${index * 100}vw)`;
-      progress.style.width = `${((index + 1) / total) * 100}%`;
-      current = index;
-    }
-
-    document.querySelector('.next').onclick = () => {
-      updateSlide(current + 1);
-    };
-
-    document.querySelector('.prev').onclick = () => {
-      updateSlide(current - 1);
-    };
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowRight") updateSlide(current + 1);
-      if (e.key === "ArrowLeft") updateSlide(current - 1);
-    });
-
-    updateSlide(0); // start on first
-  </script>
 </body>
 </html>
